@@ -56,6 +56,7 @@ void long_c(void){
     digitalWrite(PIN_IR, HIGH);
     delay(1000);
     digitalWrite(PIN_IR, LOW);
+    delay(100);
 }
 
 /*    Send "short"   */
@@ -63,4 +64,5 @@ void short_c(void){
     digitalWrite(PIN_IR, HIGH);
     delay(400);
     digitalWrite(PIN_IR, LOW);
+    delay(100);
 }
