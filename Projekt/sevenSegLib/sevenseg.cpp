@@ -46,5 +46,52 @@ void ssegDisplay(sseg ss, int num){
             digitalWrite(ss.pins[C], HIGH);
             digitalWrite(ss.pins[B], HIGH);
             break;
+        case 2:
+            digitalWrite(ss.pins[A], HIGH);
+            digitalWrite(ss.pins[B], HIGH);
+            digitalWrite(ss.pins[G], HIGH);
+            digitalWrite(ss.pins[D], HIGH);
+            digitalWrite(ss.pins[E], HIGH);
+            break;
+        case 3:
+            digitalWrite(ss.pins[A], HIGH);
+            digitalWrite(ss.pins[B], HIGH);
+            digitalWrite(ss.pins[C], HIGH);
+            digitalWrite(ss.pins[D], HIGH);
+            digitalWrite(ss.pins[G], HIGH);
+            break;
+        case 4:
+            digitalWrite(ss.pins[F], HIGH);
+            digitalWrite(ss.pins[G], HIGH);
+            digitalWrite(ss.pins[B], HIGH);
+            digitalWrite(ss.pins[C], HIGH);
+            break;
+        case 5:
+            digitalWrite(ss.pins[A], HIGH);
+            digitalWrite(ss.pins[F], HIGH);
+            digitalWrite(ss.pins[G], HIGH);
+            digitalWrite(ss.pins[C], HIGH);
+            digitalWrite(ss.pins[D], HIGH);
+            break;
+        case 6:
+            ssegTest(ss);
+            digitalWrite(ss.pins[B], LOW);
+            break;
+        case 7:
+            digitalWrite(ss.pins[A], HIGH);
+            digitalWrite(ss.pins[C], HIGH);
+            digitalWrite(ss.pins[B], HIGH);;
+            break;
+        case 8:
+            ssegTest(ss);
+            break;
+        case 9:
+            ssegTest(ss);
+            digitalWrite(ss.pins[E], LOW);
+            break;
+        case 0:
+            ssegTest(ss);
+            digitalWrite(ss.pins[G], LOW);
+            break;
     }
 }

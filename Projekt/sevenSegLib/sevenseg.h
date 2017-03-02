@@ -18,6 +18,6 @@ typedef struct _SEG{
 
 sseg ssegInit(int a, int b, int c, int d, int e, int f, int g);
 void ssegTest(sseg ss);
-void ssegDisplay(int i);
+void ssegDisplay(sseg ss, int num);
 
 #endif // _SEVENSEG_H_
