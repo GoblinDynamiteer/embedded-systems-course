@@ -7,6 +7,8 @@ void setup(){
 }
 
 void loop(){
-    ssegTest(numLed);
-    delay(1000);
+    for(int i = 0; i< 10; i++){
+        ssegDisplay(numLed, i);
+        delay(1000);
+    }
 }
