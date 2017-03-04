@@ -24,7 +24,8 @@ Programmering av inbyggda system
 #include <stdlib.h>
 
 /*  To hold higher fibonacci numbers,
-    cant use for all 100 though. */
+    cant use for all 100 though.
+    --Unsure how to solve that.*/
 typedef unsigned long long int ulli;
 
 ulli fibonacci(int n);
@@ -54,6 +55,7 @@ ulli fibonacci(int n){
 
 /*    Print the first 100 fibonacci numbers */
 void fibonacci100(){
+    printf("Fibonacci Series:\n");
     for(int i = 0; i < 100; i++){
         /*  Unsigned long long is not big enough for higher numbers. */
         printf("%03i : %u\n", i+1, fibonacci(i));
