@@ -22,7 +22,7 @@ int * combineLists(int a[], int b[], int size);
 int main(int argc, char const *argv[]) {
     int listA[] = {1,2,3,4,5};
     int listB[] = {100,200,300,400,500};
-    /*  Get number of elements from list A */
+    /*  Get number of elements in list A */
     int size = sizeof(listA) / sizeof(listA[0]);
     int * combinedList = combineLists(listA, listB, size);
     /*    Print combined list   */
