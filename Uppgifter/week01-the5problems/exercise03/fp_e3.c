@@ -38,10 +38,13 @@ int main(int argc, char const *argv[]) {
 /*   Calculate fibonacci number n    */
 ulli fibonacci(int n){
     if(!n){
-        return 0;
+        return 0ull;
     }
+    /*  Series start with 0, 1 */
     ulli num1 = 0, num2 = 1;
     while(--n){
+        /*  Set num2 to next number in sequence,
+            and set num1 to num2 previous value */
         ulli temp = num2;
         num2 = num1 + num2;
         num1 = temp;
