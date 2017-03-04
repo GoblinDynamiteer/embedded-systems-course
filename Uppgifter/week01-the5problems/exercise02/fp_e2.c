@@ -22,8 +22,10 @@ int * combineLists(int a[], int b[], int size);
 int main(int argc, char const *argv[]) {
     int listA[] = {1,2,3,4,5};
     int listB[] = {100,200,300,400,500};
+    /*  Get number of elements from list A */
     int size = sizeof(listA) / sizeof(listA[0]);
     int * combinedList = combineLists(listA, listB, size);
+    /*    Print combined list   */
     for(int i = 0; i < size * 2; i++){
         printf("%d \n", combinedList[i]);
     }
@@ -33,8 +35,11 @@ int main(int argc, char const *argv[]) {
 /*   Combine two lists, assume they are of same element size
     returns pointer to new list. */
 int * combineLists(int a[], int b[], int size){
+    /*  Allocate memory for new int array */
     int * combList = malloc(sizeof(int) * size * 2);
+    /*  Indexes for original list elements and new, combined list */
     int ix = 0, ixc = 0;
+    /*  Add elements from lists A and B to new combined list */
     while(size--){
         combList[ixc++] = a[ix];
         combList[ixc++] = b[ix++];
