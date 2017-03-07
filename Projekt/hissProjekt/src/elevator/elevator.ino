@@ -19,11 +19,13 @@ Button elevButton3(pinelevButton3);
 
 int elevatorFloorPosition();
 void moveElevatorToFloor(int floor);
+void callElevatorToFloor(int floor);
 
 void moveElevatorToFloor(int floor){
     if(floor != elevatorFloorPosition()){
         elevatorCurrentFloor = floor;
     }
+    delay(1000);
     digitalWrite(pinelevLED1, LOW);
     digitalWrite(pinelevLED2, LOW);
     digitalWrite(pinelevLED3, LOW);
@@ -40,6 +42,27 @@ void moveElevatorToFloor(int floor){
 
 int elevatorFloorPosition(){
     return elevatorCurrentFloor;
+}
+
+void callElevatorToFloor(int floor){
+
+    digitalWrite(pincallLED1, LOW);
+    digitalWrite(pincallLED2, LOW);
+    digitalWrite(pincallLED3, LOW);
+    if(floor == 1){
+        digitalWrite(pincallLED1, HIGH);
+    }
+    else if(floor == 2){
+        digitalWrite(pincallLED2, HIGH);
+    }
+    else{
+        digitalWrite(pincallLED3, HIGH);
+    }
+    delay(1000);
+    moveElevatorToFloor(floor);
+    digitalWrite(pincallLED1, LOW);
+    digitalWrite(pincallLED2, LOW);
+    digitalWrite(pincallLED3, LOW);
 }
 
 void setup(){
@@ -59,8 +82,13 @@ void setup(){
 }
 
 void loop(){
-    for(int i = 1; i <= 3; i++){
-        moveElevatorToFloor(i);
-        delay(1000);
+    if(callButton1.pressed()){
+        callElevatorToFloor(1);
+    }
+    else if(callButton2.pressed()){
+        callElevatorToFloor(2);
+    }
+    else if(callButton3.pressed()){
+        callElevatorToFloor(3);
     }
 }
