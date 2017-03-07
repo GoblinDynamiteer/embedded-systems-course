@@ -60,6 +60,7 @@ void callElevatorToFloor(int floor){
     }
     delay(1000);
     moveElevatorToFloor(floor);
+    delay(500);
     digitalWrite(pincallLED1, LOW);
     digitalWrite(pincallLED2, LOW);
     digitalWrite(pincallLED3, LOW);
@@ -90,5 +91,15 @@ void loop(){
     }
     else if(callButton3.pressed()){
         callElevatorToFloor(3);
+    }
+
+    if(elevButton1.pressed()){
+        moveElevatorToFloor(1);
+    }
+    else if(elevButton2.pressed()){
+        moveElevatorToFloor(2);
+    }
+    else if(elevButton3.pressed()){
+        moveElevatorToFloor(3);
     }
 }
