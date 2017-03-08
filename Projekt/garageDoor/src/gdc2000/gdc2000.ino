@@ -38,6 +38,7 @@ void setup(){
     pinMode(servoDoor, OUTPUT);
     pinMode(sensorDoor, INPUT);
     pinMode(indicatorLED, OUTPUT);
+    setIndicatorLED(OFF);
 }
 
 void loop(){
