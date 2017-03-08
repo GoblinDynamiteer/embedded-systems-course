@@ -16,6 +16,8 @@
         Add emergency stop / signal
         Elevator care movement Queue
         Simulate motor
+        Simulate door opening
+        Simulate door locks
 
    */
 
