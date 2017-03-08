@@ -24,7 +24,7 @@ Sample Input    Sample Output 1
 Sample Input 2  Sample Output 2
 1000 10         5759
 
-
+------------------------------------------------------
 Johan Kämpe
 Mjukvaruutvecklare Inbyggda System
 
@@ -38,8 +38,15 @@ Programmering av inbyggda system
 
 int main(int argc, char const *argv[]) {
     int v, h, ladderHeight;
+    printf("-- Ladder length calculaton -- \n");
+    printf("h = wall height | v = ladder angle\n\n");
     printf("Input h and v:\n");
     scanf("%i %i", &h, &v);
+    /*  Calculate ladder length with trigonometry
+            - sin() expects angle in radians.
+            - Angle in degrees is converted by
+              multiplying by PI and dividing by 180.
+            - 1.0 is added to round up to nearest integer. */
     ladderHeight = (int)(h / sin((v) * M_PI/180.0) + 1.0);
     printf("Needed ladder height: %i", ladderHeight);
     return 0;
