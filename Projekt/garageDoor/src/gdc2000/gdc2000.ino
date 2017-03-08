@@ -43,8 +43,7 @@ void setup(){
 
 void loop(){
     /*   Down button is pressed and door state is open    */
-    if (digitalRead(btnCloseDoor) &&
-        doorState == OPEN){
+    if(digitalRead(btnCloseDoor) && doorState == OPEN){
             setIndicatorLED(ON);
             /*   Operate door while safety sensor is not triggering,
                 and the lower door breaker isn't triggered */
@@ -55,8 +54,7 @@ void loop(){
             setIndicatorLED(OFF);
     }
     /*   Up button is pressed and door state is closed    */
-    else if (digitalRead(btnOpenDoor) &&
-        doorState == CLOSED){
+    else if(digitalRead(btnOpenDoor) && doorState == CLOSED){
             setIndicatorLED(ON);
             /*   Operate door while safety sensor is not triggering,
                 and the upper door breaker isn't triggered */
