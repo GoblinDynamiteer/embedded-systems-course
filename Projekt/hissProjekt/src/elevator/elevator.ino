@@ -23,7 +23,7 @@
                         the car to another floor.
         elevLED         LEDs used to indicate on what floor the elevator
                         car is currently at. */
-enum {pincallButton1, pincallButton23 /*  CHANGE TO BUTTON 2!!!! */, pincallButton3,
+enum {pincallButton1, pincallButton2, pincallButton3,
     pincallLED1, pincallLED2, pincallLED3,
     pinelevButton1, pinelevButton2, pinelevButton3,
     pinelevLED1, pinelevLED2, pinelevLED3
@@ -35,7 +35,6 @@ enum {CLOSE, OPEN}; //for doors
 enum {NO, YES}; //general
 
 #define NUM_FLOORS 3
-#define pincallButton2 12       //REMOVE!!!!!
 #define CAR_MOVEMENT_TIME 2000  //for motor/elevator car simulation
 #define DOOR_OPEN_TIME 4000
 #define EMERGENCY_SIGNAL_FREQUENCY 5000
