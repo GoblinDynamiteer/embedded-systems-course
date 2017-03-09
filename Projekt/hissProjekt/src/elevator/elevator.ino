@@ -24,8 +24,10 @@
 
 #include <Button.h> // for button handling
 
-/*   Placeholder elevator car sensor, for current floor    */
+/*   Placeholder sensors   */
 int elevatorCurrentFloor = 3;
+int emergencyStopEngaged = 0;
+int emergencySignalEngaged = 0;
 
 /*    Pinout for LEDs and buttons
         callButton:     Button outside of elevator shaft that
@@ -37,13 +39,18 @@ int elevatorCurrentFloor = 3;
         elevLED         LEDs used to indicate on what floor the elevator
                         car is currently at.
  */
-enum {pincallButton1, pincallButton2, pincallButton3,
+enum {pincallButton1, pincallButton23 /*  CHANGE TO BUTTON 2!!!! */, pincallButton3,
     pincallLED1, pincallLED2, pincallLED3,
     pinelevButton1, pinelevButton2, pinelevButton3,
     pinelevLED1, pinelevLED2, pinelevLED3
 };
 
+/*  Misc macros   */
+enum {FALSE, TRUE};
+
 #define NUM_FLOORS 3
+#define pincallButton2 12 //REMOVE!!!!!
+#define CAR_MOVEMENT 10000
 
 /*    Init buttons   */
 Button callButton1(pincallButton1);
@@ -60,7 +67,12 @@ int carQueue[NUM_FLOORS];
 /*    Elevator car function prototypes */
 int elevatorFloorPosition();
 void moveElevatorToFloor(int floor);
-void callElevatorToFloor(int floor);
+int getButtons(void);
+
+/*   Safety function prototypes  */
+int isEmergencyStopEngaged(void);
+int isEmergencySignalEngaged(void);
+
 
 /*   LED function prototypes  */
 void setIndicatorLED(int floor);
@@ -72,6 +84,7 @@ void addToCarQueue(int floor);
 void handleCarQueue(void);
 void removeFromCarQueue(int floor);
 
+
 /*   Moves elevator car to passed floor    */
 void moveElevatorToFloor(int floor){
     /*   If elevator var is not already at the correct floor,
@@ -79,9 +92,9 @@ void moveElevatorToFloor(int floor){
     if(floor != elevatorFloorPosition()){
         elevatorCurrentFloor = floor;
     }
-    delay(1000);
+    //delay(1000);
     setIndicatorLED(floor);
-    delay(500);
+    //delay(500);
     setCallButtonLEDOff(floor);
 }
 
@@ -89,7 +102,9 @@ void moveElevatorToFloor(int floor){
 void addToCarQueue(int floor){
   for(int i = 0; i < NUM_FLOORS; i++){
     /*  Don't add floor already in queue   */
-    if((!carQueue[i]) && (carQueue[i] != floor)){
+    if((carQueue[i] == 0) && (carQueue[i] != floor)){
+      Serial.print("Adding floor to queue: ");
+      Serial.println(floor);
       carQueue[i] = floor;
       break;
     }
@@ -110,12 +125,14 @@ void removeFromCarQueue(int floor){
 void handleCarQueue(void){
   int nextFloor = 0;
   for(int i = 0; i < NUM_FLOORS; i++){
-    if(!carQueue[i]){
+    if(carQueue[i] != 0){
       nextFloor = carQueue[i];
       break;
     }
   }
-  if(nextFloor){
+  if(nextFloor != 0){
+    Serial.print("Going to floor: ");
+    Serial.println(nextFloor);
     moveElevatorToFloor(nextFloor);
     removeFromCarQueue(nextFloor);
   }
@@ -147,15 +164,14 @@ int elevatorFloorPosition(){
     return elevatorCurrentFloor;
 }
 
-/*    Function that calls elevator to a floor.   */
-void callElevatorToFloor(int floor){
-    /*    Turn on correct callLED   */
-    setCallButtonLEDOn(floor);
-    delay(1000);
-    /*   Moves the elevator car to the correct floor and turn off callLEDs   */
-    moveElevatorToFloor(floor);
-    delay(500);
-    setCallButtonLEDOff(floor);
+/*  Returns 1/0 for emergency stop status   */
+int isEmergencyStopEngaged(void){
+  return emergencyStopEngaged;
+}
+
+/*  Returns 1/0 for emergency signal status   */
+int isEmergencySignalEngaged(void){
+  return emergencySignalEngaged;
 }
 
 void setup(){
@@ -174,34 +190,37 @@ void setup(){
     elevButton1.begin();
     elevButton2.begin();
     elevButton3.begin();
-    //Serial.begin(9600);
+    Serial.begin(9600);
 }
 
 void loop(){
-    /*   loop for elevator call buttons    */
-    if(callButton1.pressed()){
-      addToCarQueue(1);
-      setCallButtonLEDOn(1);
+  if(isEmergencyStopEngaged() != 1){
+    if(millis() % CAR_MOVEMENT == 0){
+      handleCarQueue();
     }
-    if(callButton2.pressed()){
-      addToCarQueue(2);
-      setCallButtonLEDOn(2);
+    int gotoFloor = getButtons();
+    if(gotoFloor != 0){
+      addToCarQueue(gotoFloor);
     }
-    if(callButton3.pressed()){
-      addToCarQueue(3);
-      setCallButtonLEDOn(3);
-    }
+  }
+}
 
-    /*   loop for elevator buttons    */
-    if(elevButton1.pressed()){
-      addToCarQueue(1);
-    }
-    if(elevButton2.pressed()){
-      addToCarQueue(2);
-    }
-    if(elevButton3.pressed()){
-      addToCarQueue(3);
-    }
+/*   Checks elevator car buttons and call buttons
+    returns corresponding floor to move elevator car to */
+int getButtons(void){
+  int gotoFloor = 0;
+  /*   Elevator call buttons    */
+  if(callButton1.pressed() == TRUE){  gotoFloor = 1;  }
+  if(callButton2.pressed() == TRUE){  gotoFloor = 2;  }
+  if(callButton3.pressed() == TRUE){  gotoFloor = 3;  }
 
-    handleCarQueue();
+  /*  Lights call button LED, if pressed   */
+  if(gotoFloor != 0){ setCallButtonLEDOn(gotoFloor);  }
+
+  /*   Elevator car buttons    */
+  if(elevButton1.pressed() == TRUE){  gotoFloor = 1;  }
+  if(elevButton2.pressed() == TRUE){  gotoFloor = 2;  }
+  if(elevButton3.pressed() == TRUE){  gotoFloor = 3;  }
+
+  return gotoFloor;
 }
