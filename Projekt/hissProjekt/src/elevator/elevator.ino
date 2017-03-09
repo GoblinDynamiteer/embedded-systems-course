@@ -42,15 +42,15 @@ enum {CLOSE, OPEN}; //for doors
 enum {NO, YES};
 
 #define NUM_FLOORS 3
-#define pincallButton2 12 //REMOVE!!!!!
-#define CAR_MOVEMENT_TIME 2000 //for motor/elevator car simulation
+#define pincallButton2 12       //REMOVE!!!!!
+#define CAR_MOVEMENT_TIME 2000  //for motor/elevator car simulation
 #define DOOR_OPEN_TIME 4000
 #define EMERGENCY_SIGNAL_FREQUENCY 5000
 #define ELEVATOR_START_FLOOR 2
 
 /*   Placeholder sensors   */
 int elevatorCurrentFloor = 3;
-int emergencyStopEngaged = 0; //set to 1 to simulate emergency stop
+int emergencyStopEngaged = 0;   //set to 1 to simulate emergency stop
 int emergencySignalEngaged = 0; //set to 1 to simulate emergency signal
 int motorRunning = 0;
 int doorLocked[NUM_FLOORS];
@@ -58,6 +58,8 @@ int doorLocked[NUM_FLOORS];
 unsigned long motorTimer; //for motor/elevator car simulation
 unsigned long doorTimer;
 
+/*   Elevator car queue  */
+int carQueue[NUM_FLOORS];
 
 /*    Init buttons   */
 Button callButton1(pincallButton1);
@@ -66,9 +68,6 @@ Button callButton3(pincallButton3);
 Button elevButton1(pinelevButton1);
 Button elevButton2(pinelevButton2);
 Button elevButton3(pinelevButton3);
-
-/*   Elevator car queue  */
-int carQueue[NUM_FLOORS];
 
 /*    Function prototypes   */
 /*    Elevator car function prototypes */
@@ -93,9 +92,9 @@ void handleCarQueue(void);
 void removeFromCarQueue(int floor);
 
 /*  Elevator Door function prototypes */
-int isdoorLockeded(int floor);
+int isDoorLockeded(int floor);
 int doorsLocked(void);
-void controlDoor(int floor, int openCLose);
+void controlDoor(int floor, int openClose);
 
 
 /*   Moves elevator car to passed floor    */
@@ -143,6 +142,7 @@ void handleCarQueue(void){
       break;
     }
   }
+
   /*   If queue was not empty, go to floor  */
   if(nextFloor != 0){
     Serial.print("Going to floor: ");
@@ -171,12 +171,12 @@ void setCallButtonLEDOn(int floor){
 
 /*  Turns call button indicator LED on   */
 void setCallButtonLEDOff(int floor){
-      digitalWrite(pincallLED1 + floor - 1, LOW);
+  digitalWrite(pincallLED1 + floor - 1, LOW);
 }
 
 /*    Returns elevetor car floor position   */
 int elevatorFloorPosition(){
-    return elevatorCurrentFloor;
+  return elevatorCurrentFloor;
 }
 
 /*  Returns 1/0 for emergency stop status   */
@@ -190,7 +190,7 @@ int isEmergencySignalEngaged(void){
 }
 
 /*  Returns 1/0 status of door locks   */
-int isdoorLockeded(int floor){
+int isDoorLockeded(int floor){
   return doorLocked[floor-1];
 }
 
