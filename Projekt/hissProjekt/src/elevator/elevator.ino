@@ -8,13 +8,6 @@
 
     Coding project that simulates an elevator.
 
-    Delays are used in the code to simulate
-    elevator car movement.
-
-    Todo:
-        Simulate door opening
-        Simulate door locks
-
    */
 
 /*  For button handling */
@@ -39,7 +32,7 @@ enum {pincallButton1, pincallButton23 /*  CHANGE TO BUTTON 2!!!! */, pincallButt
 /*  Misc macros   */
 enum {FALSE, TRUE}; //for buttons
 enum {CLOSE, OPEN}; //for doors
-enum {NO, YES};
+enum {NO, YES}; //general
 
 #define NUM_FLOORS 3
 #define pincallButton2 12       //REMOVE!!!!!
@@ -194,6 +187,7 @@ int isDoorLockeded(int floor){
   return doorLocked[floor-1];
 }
 
+/*  Returns 1/0 status for all doors locked  */
 int doorsLocked(void){
   for(int i = 0; i < NUM_FLOORS; i++){
     if(doorLocked[i] == NO){
@@ -203,6 +197,7 @@ int doorsLocked(void){
   return 1;
 }
 
+/*  Controls (opens or closes) the door at a specific floor */
 void controlDoor(int floor, int openClose){
   if(openClose == OPEN){
     doorTimer = millis();
@@ -250,15 +245,16 @@ void setup(){
 }
 
 void loop(){
-  if(isEmergencyStopEngaged() != 1){
-    if((motorRunning == 0) && (doorsLocked() == YES)){
-      motorRunning = 1;
+  /*  Run if emergency stop is not engaged */
+  if(isEmergencyStopEngaged() == NO){
+    if((motorRunning == NO) && (doorsLocked() == YES)){
+      motorRunning = YES;
       motorTimer = millis();
       handleCarQueue();
     }
     /*   Simulate motor running  */
     if(millis() - motorTimer > CAR_MOVEMENT_TIME){
-      motorRunning = 0;
+      motorRunning = NO;
     }
     /*  Close doors at current elevator floor after timer ends */
     if((millis() - doorTimer > DOOR_OPEN_TIME) &&
@@ -271,7 +267,7 @@ void loop(){
     }
   }
   /*   Sends emergency signal if engaged  */
-  if(isEmergencySignalEngaged() == 1){
+  if(isEmergencySignalEngaged() == YES){
     sendEmergencySignal();
   }
 }
