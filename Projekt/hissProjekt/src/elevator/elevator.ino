@@ -28,6 +28,8 @@
 int elevatorCurrentFloor = 3;
 int emergencyStopEngaged = 0;
 int emergencySignalEngaged = 0;
+int motorRunning = 0;
+unsigned long timer; //for motor/elevator car simulation
 
 /*    Pinout for LEDs and buttons
         callButton:     Button outside of elevator shaft that
@@ -50,7 +52,7 @@ enum {FALSE, TRUE};
 
 #define NUM_FLOORS 3
 #define pincallButton2 12 //REMOVE!!!!!
-#define CAR_MOVEMENT 10000
+#define CAR_MOVEMENT_TIME 2000 //for motor/elevator car simulation
 
 /*    Init buttons   */
 Button callButton1(pincallButton1);
@@ -92,9 +94,7 @@ void moveElevatorToFloor(int floor){
     if(floor != elevatorFloorPosition()){
         elevatorCurrentFloor = floor;
     }
-    //delay(1000);
     setIndicatorLED(floor);
-    //delay(500);
     setCallButtonLEDOff(floor);
 }
 
@@ -195,8 +195,13 @@ void setup(){
 
 void loop(){
   if(isEmergencyStopEngaged() != 1){
-    if(millis() % CAR_MOVEMENT == 0){
+    if(motorRunning == 0){
+      motorRunning = 1;
+      timer = millis();
       handleCarQueue();
+    }
+    if(millis() - timer > CAR_MOVEMENT_TIME){
+      motorRunning = 0;
     }
     int gotoFloor = getButtons();
     if(gotoFloor != 0){
