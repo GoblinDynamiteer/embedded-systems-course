@@ -17,15 +17,9 @@
 
    */
 
+/*  For button handling */
+#include <Button.h>
 
-#include <Button.h> // for button handling
-
-/*   Placeholder sensors   */
-int elevatorCurrentFloor = 3;
-int emergencyStopEngaged = 0;
-int emergencySignalEngaged = 1;
-int motorRunning = 0;
-unsigned long timer; //for motor/elevator car simulation
 
 /*    Pinout for LEDs and buttons
         callButton:     Button outside of elevator shaft that
@@ -35,8 +29,7 @@ unsigned long timer; //for motor/elevator car simulation
         elevButtons:    Buttons inside to elevator car, used to move
                         the car to another floor.
         elevLED         LEDs used to indicate on what floor the elevator
-                        car is currently at.
- */
+                        car is currently at. */
 enum {pincallButton1, pincallButton23 /*  CHANGE TO BUTTON 2!!!! */, pincallButton3,
     pincallLED1, pincallLED2, pincallLED3,
     pinelevButton1, pinelevButton2, pinelevButton3,
@@ -44,13 +37,27 @@ enum {pincallButton1, pincallButton23 /*  CHANGE TO BUTTON 2!!!! */, pincallButt
 };
 
 /*  Misc macros   */
-enum {FALSE, TRUE};
+enum {FALSE, TRUE}; //for buttons
+enum {CLOSE, OPEN}; //for doors
+enum {NO, YES};
 
 #define NUM_FLOORS 3
 #define pincallButton2 12 //REMOVE!!!!!
 #define CAR_MOVEMENT_TIME 2000 //for motor/elevator car simulation
+#define DOOR_OPEN_TIME 4000
 #define EMERGENCY_SIGNAL_FREQUENCY 5000
 #define ELEVATOR_START_FLOOR 2
+
+/*   Placeholder sensors   */
+int elevatorCurrentFloor = 3;
+int emergencyStopEngaged = 0; //set to 1 to simulate emergency stop
+int emergencySignalEngaged = 0; //set to 1 to simulate emergency signal
+int motorRunning = 0;
+int doorLocked[NUM_FLOORS];
+
+unsigned long motorTimer; //for motor/elevator car simulation
+unsigned long doorTimer;
+
 
 /*    Init buttons   */
 Button callButton1(pincallButton1);
@@ -85,6 +92,11 @@ void addToCarQueue(int floor);
 void handleCarQueue(void);
 void removeFromCarQueue(int floor);
 
+/*  Elevator Door function prototypes */
+int isdoorLockeded(int floor);
+int doorsLocked(void);
+void controlDoor(int floor, int openCLose);
+
 
 /*   Moves elevator car to passed floor    */
 void moveElevatorToFloor(int floor){
@@ -94,6 +106,7 @@ void moveElevatorToFloor(int floor){
         elevatorCurrentFloor = floor;
     }
     setIndicatorLED(floor);
+    controlDoor(floor, OPEN);
     setCallButtonLEDOff(floor);
 }
 
@@ -176,6 +189,34 @@ int isEmergencySignalEngaged(void){
   return emergencySignalEngaged;
 }
 
+/*  Returns 1/0 status of door locks   */
+int isdoorLockeded(int floor){
+  return doorLocked[floor-1];
+}
+
+int doorsLocked(void){
+  for(int i = 0; i < NUM_FLOORS; i++){
+    if(doorLocked[i] == NO){
+      return 0;
+    }
+  }
+  return 1;
+}
+
+void controlDoor(int floor, int openClose){
+  if(openClose == OPEN){
+    doorTimer = millis();
+    doorLocked[floor-1] = NO;
+    Serial.print("Opening elevator door at floor ");
+    Serial.println(floor);
+  }
+  else if(openClose == CLOSE){
+    doorLocked[floor-1] = YES;
+    Serial.print("Closing elevator door at floor ");
+    Serial.println(floor);
+  }
+}
+
 /*  Placeholder function for sending emergency signal   */
 void sendEmergencySignal(void){
   if(millis() % EMERGENCY_SIGNAL_FREQUENCY == 0){
@@ -194,6 +235,7 @@ void setup(){
       pinMode(pinelevLED1 + i, OUTPUT);
       /*  NULL elevator car queue   */
       carQueue[i] = 0; //Zero is used as empty queue position
+      doorLocked[i] = YES;
     }
     /*   Elevator car start floor */
     carQueue[0] = ELEVATOR_START_FLOOR;
@@ -209,13 +251,19 @@ void setup(){
 
 void loop(){
   if(isEmergencyStopEngaged() != 1){
-    if(motorRunning == 0){
+    if((motorRunning == 0) && (doorsLocked() == YES)){
       motorRunning = 1;
-      timer = millis();
+      motorTimer = millis();
       handleCarQueue();
     }
-    if(millis() - timer > CAR_MOVEMENT_TIME){
+    /*   Simulate motor running  */
+    if(millis() - motorTimer > CAR_MOVEMENT_TIME){
       motorRunning = 0;
+    }
+    /*  Close doors at current elevator floor after timer ends */
+    if((millis() - doorTimer > DOOR_OPEN_TIME) &&
+        (doorsLocked() == NO)){
+          controlDoor(elevatorFloorPosition(), CLOSE);
     }
     int gotoFloor = getButtons();
     if(gotoFloor != 0){
