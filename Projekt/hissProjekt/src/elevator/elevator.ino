@@ -12,10 +12,6 @@
     elevator car movement.
 
     Todo:
-        Break down code into functions
-        Add emergency stop / signal
-        Elevator care movement Queue
-        Simulate motor
         Simulate door opening
         Simulate door locks
 
@@ -27,7 +23,7 @@
 /*   Placeholder sensors   */
 int elevatorCurrentFloor = 3;
 int emergencyStopEngaged = 0;
-int emergencySignalEngaged = 0;
+int emergencySignalEngaged = 1;
 int motorRunning = 0;
 unsigned long timer; //for motor/elevator car simulation
 
@@ -53,6 +49,8 @@ enum {FALSE, TRUE};
 #define NUM_FLOORS 3
 #define pincallButton2 12 //REMOVE!!!!!
 #define CAR_MOVEMENT_TIME 2000 //for motor/elevator car simulation
+#define EMERGENCY_SIGNAL_FREQUENCY 5000
+#define ELEVATOR_START_FLOOR 2
 
 /*    Init buttons   */
 Button callButton1(pincallButton1);
@@ -74,6 +72,7 @@ int getButtons(void);
 /*   Safety function prototypes  */
 int isEmergencyStopEngaged(void);
 int isEmergencySignalEngaged(void);
+void sendEmergencySignal(void);
 
 
 /*   LED function prototypes  */
@@ -121,19 +120,22 @@ void removeFromCarQueue(int floor){
   }
 }
 
-/*     */
+/*   Goes to the queued floor, no priority  */
 void handleCarQueue(void){
   int nextFloor = 0;
+  /*  Gets the next floor in queue */
   for(int i = 0; i < NUM_FLOORS; i++){
     if(carQueue[i] != 0){
       nextFloor = carQueue[i];
       break;
     }
   }
+  /*   If queue was not empty, go to floor  */
   if(nextFloor != 0){
     Serial.print("Going to floor: ");
     Serial.println(nextFloor);
     moveElevatorToFloor(nextFloor);
+    /*  Remove the floor from queue */
     removeFromCarQueue(nextFloor);
   }
 }
@@ -174,22 +176,34 @@ int isEmergencySignalEngaged(void){
   return emergencySignalEngaged;
 }
 
+/*  Placeholder function for sending emergency signal   */
+void sendEmergencySignal(void){
+  if(millis() % EMERGENCY_SIGNAL_FREQUENCY == 0){
+    Serial.println("----------------------------");
+    Serial.println("EMERGENCY SIGNAL: BEEP BEEP!");
+    Serial.print("Elevator car is at floor: ");
+    Serial.println(elevatorFloorPosition());
+    Serial.println("----------------------------");
+  }
+}
+
 void setup(){
     /*   Set pinmode for LED pins and start buttons    */
     for(int i = 0; i < NUM_FLOORS; i++){
       pinMode(pincallLED1 + i, OUTPUT);
       pinMode(pinelevLED1 + i, OUTPUT);
       /*  NULL elevator car queue   */
-      carQueue[i] = 0;
+      carQueue[i] = 0; //Zero is used as empty queue position
     }
-    /*   Elevator car start floor, middle of building  */
-    carQueue[0] = NUM_FLOORS / 2 + 0.5;
+    /*   Elevator car start floor */
+    carQueue[0] = ELEVATOR_START_FLOOR;
     callButton1.begin();
     callButton2.begin();
     callButton3.begin();
     elevButton1.begin();
     elevButton2.begin();
     elevButton3.begin();
+    /*  For serial printout debugging/info   */
     Serial.begin(9600);
 }
 
@@ -207,6 +221,10 @@ void loop(){
     if(gotoFloor != 0){
       addToCarQueue(gotoFloor);
     }
+  }
+  /*   Sends emergency signal if engaged  */
+  if(isEmergencySignalEngaged() == 1){
+    sendEmergencySignal();
   }
 }
 
