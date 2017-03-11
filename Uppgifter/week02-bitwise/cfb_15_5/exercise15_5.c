@@ -74,12 +74,12 @@ int checkBitAtPosition(unsigned int num, int bit){
 
       example
       num 0x7:                  0111
-      a 1 shifted 4 positions   1000
+      a 1 shifted 3 positions   1000
       0111 & 1000 = 0
 
       example
       num 0xf:                  1111
-      a 1 shifted 4 positions   1000
+      a 1 shifted 3 positions   1000
       1111 & 1000 = 1     */
   return ((num & a) > 0);
 }
