@@ -14,10 +14,11 @@
 
 int main(void)
 {
-    /*   Set PB3 to be output    */
+    /*   Set PB3 to be output  DDRx is for setting ports to output  */
     DDRB = 0b00001000;
     /*    Loop   */
     while (1){
+        /*  PORTx is used for output, PINx is input      */
         PORTB = 0b00001000;
         _delay_ms(1000);
         PORTB = 0b00000000;
