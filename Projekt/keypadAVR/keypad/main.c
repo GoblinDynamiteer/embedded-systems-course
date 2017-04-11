@@ -1,36 +1,53 @@
 #include <avr/io.h>
 
-#define F_CPU 1000000ul
+//#define F_CPU 1000000ul
 #include <util/delay.h>
 
-
 void blinkLed(int n);
+int checkPin(int pin);
 
-int main(void)
-{
-	DDRC = 0b00100000;
-	DDRD = 0b00000100;
+/*	 Row pins	*/
+enum {	ROW1_PIN = (0b00000100), 
+		ROW2_PIN = (0b10000000), 
+		ROW3_PIN = (0b01000000)
+		};
+		
+/*	 Column pins	*/
+enum {	COL1_PIN = PD3,
+		COL2_PIN = PD1,
+		COL3_PIN = PD5
+	};
 	
-	PORTD = 0b00000100;
+int main(void){
+	DDRC = 0b00100000; //LED Output
+	DDRD = 0b11000100;
+	
+	int columnPin[4] = {0, COL1_PIN, COL2_PIN, COL3_PIN};
+	int rowPin[4] = {0, ROW1_PIN, ROW2_PIN, ROW3_PIN};
 	
 	//blinkLed(10);
-	while (1) {
-		if(PIND & (1 << PD5)){
-			blinkLed(3);
+	while(1){
+		int num = 1;
+		for(int j = 1; j <= 3; j++){
+			 PORTD = rowPin[j];
+			 _delay_ms(10);
+			for(int i = 1; i <= 3; i++){
+				if(checkPin(columnPin[i]))	{blinkLed(num);	}
+				num++;
+			}
 		}
-		if (PIND & (1 << PD3)){
-			blinkLed(1);
-		}
-		_delay_ms(5);
-    }
+	}
 }
 
 void blinkLed(int n){
 	for(int i = 0; i < n; i++){
 		 PORTC = 0b00100000;
-		 _delay_ms(300);
+		 _delay_ms(200);
 		 PORTC = 0b00000000;
-		 _delay_ms(300);
+		 _delay_ms(200);
 	}
 }
 
+int checkPin(int pin){
+	return (PIND & (1 << pin));
+}
