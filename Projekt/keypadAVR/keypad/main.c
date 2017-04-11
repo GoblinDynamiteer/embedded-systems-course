@@ -11,6 +11,9 @@
 //#define F_CPU 1000000ul
 #include <util/delay.h>
 
+#define ROWS 3 // 4
+#define COLS 3
+
 void blinkLed(int n);
 int checkPin(int pin);
 
@@ -36,11 +39,11 @@ int main(void){
 	while(1){
 		int num = 1;
 		/*	 Set row output	*/
-		for(int j = 0; j < 3; j++){
+		for(int j = 0; j < ROWS; j++){
 			 PORTD = rowPin[j];
 			 _delay_ms(10);
 			/*	 Check column input	*/
-			for(int i = 0; i < 3; i++){
+			for(int i = 0; i < COLS; i++){
 				if(checkPin(columnPin[i])){
 					blinkLed(num);
 				}

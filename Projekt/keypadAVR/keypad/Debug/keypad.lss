@@ -17,7 +17,7 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING
   6 .debug_abbrev 00000741  00000000  00000000  00000b7a  2**0
                   CONTENTS, READONLY, DEBUGGING
-  7 .debug_line   00000312  00000000  00000000  000012bb  2**0
+  7 .debug_line   00000313  00000000  00000000  000012bb  2**0
                   CONTENTS, READONLY, DEBUGGING
   8 .debug_frame  00000054  00000000  00000000  000015d0  2**2
                   CONTENTS, READONLY, DEBUGGING
@@ -188,7 +188,7 @@ int main(void){
  114:	3c 01       	movw	r6, r24
  116:	64 01       	movw	r12, r8
 		/*	 Set row output	*/
-		for(int j = 0; j < 3; j++){
+		for(int j = 0; j < ROWS; j++){
 			 PORTD = rowPin[j];
  118:	f3 01       	movw	r30, r6
  11a:	80 81       	ld	r24, Z
@@ -212,7 +212,7 @@ int main(void){
  13e:	86 01       	movw	r16, r12
 			 _delay_ms(10);
 			/*	 Check column input	*/
-			for(int i = 0; i < 3; i++){
+			for(int i = 0; i < COLS; i++){
 				if(checkPin(columnPin[i])){
  140:	f7 01       	movw	r30, r14
  142:	80 81       	ld	r24, Z
@@ -236,11 +236,11 @@ int checkPin(int pin){
  15a:	90 e0       	ldi	r25, 0x00	; 0
  15c:	82 23       	and	r24, r18
  15e:	93 23       	and	r25, r19
-		for(int j = 0; j < 3; j++){
+		for(int j = 0; j < ROWS; j++){
 			 PORTD = rowPin[j];
 			 _delay_ms(10);
 			/*	 Check column input	*/
-			for(int i = 0; i < 3; i++){
+			for(int i = 0; i < COLS; i++){
 				if(checkPin(columnPin[i])){
  160:	89 2b       	or	r24, r25
  162:	19 f0       	breq	.+6      	; 0x16a <main+0xa0>
@@ -252,11 +252,11 @@ int checkPin(int pin){
  16a:	0f 5f       	subi	r16, 0xFF	; 255
  16c:	1f 4f       	sbci	r17, 0xFF	; 255
 		/*	 Set row output	*/
-		for(int j = 0; j < 3; j++){
+		for(int j = 0; j < ROWS; j++){
 			 PORTD = rowPin[j];
 			 _delay_ms(10);
 			/*	 Check column input	*/
-			for(int i = 0; i < 3; i++){
+			for(int i = 0; i < COLS; i++){
  16e:	a0 16       	cp	r10, r16
  170:	b1 06       	cpc	r11, r17
  172:	31 f7       	brne	.-52     	; 0x140 <main+0x76>
@@ -268,7 +268,7 @@ int checkPin(int pin){
 	while(1){
 		int num = 1;
 		/*	 Set row output	*/
-		for(int j = 0; j < 3; j++){
+		for(int j = 0; j < ROWS; j++){
  17a:	9a e0       	ldi	r25, 0x0A	; 10
  17c:	c9 16       	cp	r12, r25
  17e:	d1 04       	cpc	r13, r1
