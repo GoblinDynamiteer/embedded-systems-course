@@ -1,8 +1,24 @@
-/*	Keypad to AVR
-	Atmega328p
-	12 key keypad
-	3x4 buttons
-	*/
+/*
+Course
+Programming of embedded systems
+
+Software developer embedded systems
+MÖLK Utbildning AB
+
+Programming exercise:
+Connect a 3x4 numeric keypad to an Atmega328p
+Make a connected LED blink same amount of times
+as the number of the pressed button.
+
+Project members:
+Johan Kämpe
+https://www.linkedin.com/in/johankampe/
+https://github.com/GoblinDynamiteer
+
+Dylan Saleh
+Raham Sardar
+
+*/
 
 
 #include <avr/io.h>
@@ -18,24 +34,24 @@ void blinkLed(int n);
 int checkPin(int pin);
 
 /*	 Row pins - for toggling output	*/
-enum {	ROW1_PIN = (0b00000100), 
-		ROW2_PIN = (0b10000000), 
+enum {	ROW1_PIN = (0b00000100),
+		ROW2_PIN = (0b10000000),
 		ROW3_PIN = (0b01000000)
 		};
-		
+
 /*	 Column pins - for checking input	*/
 enum {	COL1_PIN = PD3,
 		COL2_PIN = PD1,
 		COL3_PIN = PD5
 	};
-	
+
 int main(void){
 	DDRC = 0b00100000; //LED Output
 	DDRD = 0b11000100; //Column pins output
-	
+
 	int columnPin[3] = {COL1_PIN, COL2_PIN, COL3_PIN};
 	int rowPin[3] = {ROW1_PIN, ROW2_PIN, ROW3_PIN};
-	
+
 	while(1){
 		int num = 1;
 		/*	 Set row output	*/
