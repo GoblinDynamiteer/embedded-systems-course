@@ -288,32 +288,32 @@ END GROUP
  *(.fini0)
                 0x00000188                _etext = .
 
-.data           0x00800100       0x10 load address 0x00000188
+.data           0x00800100        0xc load address 0x00000188
                 0x00800100                PROVIDE (__data_start, .)
  *(.data)
  *(.data*)
  *(.rodata)
- .rodata        0x00800100       0x10 main.o
+ .rodata        0x00800100        0xc main.o
  *(.rodata*)
  *(.gnu.linkonce.d*)
-                0x00800110                . = ALIGN (0x2)
-                0x00800110                _edata = .
-                0x00800110                PROVIDE (__data_end, .)
+                0x0080010c                . = ALIGN (0x2)
+                0x0080010c                _edata = .
+                0x0080010c                PROVIDE (__data_end, .)
 
-.bss            0x00800110        0x0
+.bss            0x0080010c        0x0
                 [!provide]                PROVIDE (__bss_start, .)
  *(.bss)
  *(.bss*)
  *(COMMON)
                 [!provide]                PROVIDE (__bss_end, .)
                 0x00000188                __data_load_start = LOADADDR (.data)
-                0x00000198                __data_load_end = (__data_load_start + SIZEOF (.data))
+                0x00000194                __data_load_end = (__data_load_start + SIZEOF (.data))
 
-.noinit         0x00800110        0x0
+.noinit         0x0080010c        0x0
                 [!provide]                PROVIDE (__noinit_start, .)
  *(.noinit*)
                 [!provide]                PROVIDE (__noinit_end, .)
-                0x00800110                _end = .
+                0x0080010c                _end = .
                 [!provide]                PROVIDE (__heap_start, .)
 
 .eeprom         0x00810000        0x0
@@ -396,10 +396,10 @@ END GROUP
  .debug_abbrev  0x00000000      0x5a2 C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.1.130/gcc/dev/atmega328p/avr5/crtatmega328p.o
  .debug_abbrev  0x000005a2      0x19f main.o
 
-.debug_line     0x00000000      0x318
+.debug_line     0x00000000      0x312
  *(.debug_line .debug_line.* .debug_line_end)
  .debug_line    0x00000000      0x133 C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.1.130/gcc/dev/atmega328p/avr5/crtatmega328p.o
- .debug_line    0x00000133      0x1e5 main.o
+ .debug_line    0x00000133      0x1df main.o
 
 .debug_frame    0x00000000       0x54
  *(.debug_frame)
@@ -411,9 +411,9 @@ END GROUP
  .debug_str     0x00000208      0x1db main.o
                                 0x20f (size before relaxing)
 
-.debug_loc      0x00000000      0x1dc
+.debug_loc      0x00000000      0x1da
  *(.debug_loc)
- .debug_loc     0x00000000      0x1dc main.o
+ .debug_loc     0x00000000      0x1da main.o
 
 .debug_macinfo
  *(.debug_macinfo)
