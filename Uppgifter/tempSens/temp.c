@@ -1,13 +1,23 @@
-/*    Store temp values up to 15 in 8 bit variables 2x4 bits   */
+/*    Store temp values up to 15 in 8 bit variables 2x4 bits
+
+    0000 0000
+    HIGH LOW
+
+    MAX Value = 0b1111 = 15
+
+
+   */
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 
-typedef unsigned char uint8_t;
+typedef unsigned char uint8_t; //8-bit unsigned integer
 
 #define MAX_VALUES 100
+#define MAX_VALUE 15
 
+/*   Function prototypes    */
 void setTempH(uint8_t * tempArr, uint8_t temp);
 void setTempL(uint8_t * tempArr, uint8_t temp);
 uint8_t getTempH(uint8_t tempArr);
@@ -54,7 +64,7 @@ uint8_t getTempL(uint8_t tempArr){
 
 /*    Randomize a value up to 15   */
 uint8_t getRandomTemp(void){
-    return (rand() % (15)) + 1;
+    return (rand() % (MAX_VALUE)) + 1;
 }
 
 /*    Seed random   */
