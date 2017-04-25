@@ -6,7 +6,7 @@
 
 typedef unsigned char uint8_t;
 
-#define MAX_VALUES 20
+#define MAX_VALUES 100
 
 void setTempH(uint8_t * tempArr, uint8_t temp);
 void setTempL(uint8_t * tempArr, uint8_t temp);
@@ -28,30 +28,33 @@ int main(){
     }
 }
 
+/*    Set value to 4 high bits in 8 bit integer   */
 void setTempH(uint8_t * tempArr, uint8_t temp){
     printf(" - SETTING HIGH BITS: %i\n", temp);
+    *tempArr &= ~(0b11110000);
     *tempArr |= (temp << 4);
 }
 
+/*    Set value to 4 low bits in 8 bit integer   */
 void setTempL(uint8_t * tempArr, uint8_t temp){
     printf(" - SETTING LOW BITS: %i\n", temp);
-    *tempArr |= ((0b00001111) & temp);
+    *tempArr &= ~(0b00001111);
+    *tempArr |= temp;
 }
 
+/*    Get value from 4 low bits in 8 bit integer   */
 uint8_t getTempH(uint8_t tempArr){
-    uint8_t ret = 0x00;
-    ret |= (tempArr >> 4);
-    return ret;
+    return (uint8_t) 0x00 | (tempArr >> 4);;
 }
 
+/*    Get value from 4 high bits in 8 bit integer   */
 uint8_t getTempL(uint8_t tempArr){
-    uint8_t ret = 0x00;
-    ret = tempArr & (0b00001111);
-    return ret;
+    return (uint8_t) 0x00 | (tempArr & (0b00001111));
 }
 
+/*    Randomize a value up to 15   */
 uint8_t getRandomTemp(void){
-    return (rand() % (15-8)) + 8 + 1;
+    return (rand() % (15)) + 1;
 }
 
 /*    Seed random   */
