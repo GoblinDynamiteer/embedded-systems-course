@@ -31,14 +31,14 @@ int ledPins[10] = {
     LED3_PIN,
     LED4_PIN,
     LED5_PIN,
-    LED6_PIN,
-    LED7_PIN,
+    LED6_PIN, //index 5
+    LED7_PIN, //index 6
     LED8_PIN,
     LED9_PIN,
-    LED10_PIN
+    LED10_PIN //index 9
 };
-
-#define MIN_DUTY_CYCLE (255 * 0.3)
+int fanRunning = 0;
+#define MIN_DUTY_CYCLE (255 * 0.25)
 #define DUTY_CYCLE_STEPS ((255 - MIN_DUTY_CYCLE) / 10)
 #define FAN_PIN PB3 //Arduino pin D11 - OC2A PWM
 //#define ON_BUTTON PC0
@@ -50,14 +50,14 @@ int ledPins[10] = {
 int checkPin(int pin);
 void setLedIndicator(int n);
 void setFanSpeed(int n);
-void setFanSpeed2(int n);
 
 int main(void){
     //DDRC &= ~(1 << ON_BUTTON);
     //DDRC &= ~(1 << OFF_BUTTON);
-    DDRC = 0x00;
-    DDRD = (0b11111111);
-    DDRB = (0b11111111);
+    DDRC = (0b00000000); //Read
+    PORTC = 0xFF;
+    DDRD = (0b11111111); //Write
+    DDRB = (0b11111111); //Write
     //DDRB |= (1<<LED8_PIN) | (1<<LED9_PIN) | (1<<LED10_PIN) | (1<<FAN_PIN);
     int fanSpeed = OFF;
     int updateSetting = 0;
@@ -67,37 +67,36 @@ int main(void){
         _delay_ms(200);
     }
     _delay_ms(1000);
+    /*   Main loop    */
     while (1){
-        //if(checkPin(ON_BUTTON)){
-        if(PINC & (1 << ON_BUTTON)){
-            fanSpeed++;
-            if(fanSpeed > MAX_SPEED){
-                fanSpeed = MAX_SPEED;
+        if(!checkPin(ON_BUTTON)){
+            if(fanSpeed != MAX_SPEED){
+                fanSpeed++;
+                updateSetting = 1;
+           }
+        }
+
+        else if(!checkPin(OFF_BUTTON)){
+            if(fanSpeed != OFF){
+                fanSpeed--;
+                updateSetting = 1;
             }
-            updateSetting = 1;
-            _delay_ms(100);
         }
-        //if(checkPin(OFF_BUTTON)){
-        if(PINC & (1 << OFF_BUTTON)){
-              fanSpeed--;
-              if(fanSpeed < OFF){
-                fanSpeed = OFF;
-              }
-              updateSetting = 1;
-              _delay_ms(100);
-        }
+
         if(updateSetting){
             setFanSpeed(fanSpeed);
             setLedIndicator(fanSpeed);
             updateSetting = 0;
+            _delay_ms(200);
         }
-        _delay_ms(100);
     }
 }
 
 /*	 Check digital input on pin, returns 1 / 0	*/
 int checkPin(int pin){
-	return (PINC & (1 << pin));
+    int check = (PINC & (1 << pin));
+	//return (PINC & (1 << pin));
+    return (check > 0);
 }
 
 /*   Set fan speed via PWM?! */
@@ -105,36 +104,37 @@ void setFanSpeed(int n){
     uint8_t dutyCycle;
     dutyCycle = n * DUTY_CYCLE_STEPS + MIN_DUTY_CYCLE;
     if(!n){
-        DDRB &= ~(1<< FAN_PIN);
+        DDRB &= ~(1 << FAN_PIN);
         dutyCycle = 0x00;
+        fanRunning = 0;
     }
-    if(n == 1){
-        DDRB |= (1<< FAN_PIN);
+    if(n == 1 && !fanRunning){
+        DDRB |= (1 << FAN_PIN);
         _delay_ms(700);
+        fanRunning = 1;
     }
     if(n == MAX_SPEED){
         dutyCycle = 255;
     }
-
-    OCR2A = dutyCycle;
-    // set PWM for 50% duty cycle
+    OCR2A = dutyCycle; //0-255
     TCCR2A |= (1 << COM2A1);
     // set none-inverting mode
     TCCR2A |= (1 << WGM21) | (1 << WGM20);
     // set fast PWM Mode
     TCCR2B |= (1 << CS21);
     // set prescaler to 8 and starts PWM
-    _delay_ms(10);
 }
 
 void setLedIndicator(int n){
     /*   Set LEDs off    */
     PORTD = 0x00;
     PORTB &= (0b11101000);
-    /*  Set LEDs on     */
+
+    /*    Skip loop   */
     if(n == OFF){
         return;
     }
+    /*  Set LEDs on     */
     for(int i = 0; i < n; i++){
         if(i < 6){
             PORTD |= (1 << ledPins[i]);
